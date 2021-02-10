@@ -20,12 +20,12 @@ The **timer_u32()** is an alternative for the **esp_timer_get_time()** function 
 
 This is a typical case
 
-   uint32_t t0,t1,dt;
+      uint32_t t0,t1,dt;
    
-   t0 = timer_u32();
-   <code to be measured>
-   t1 = timer_u32();
-   dt = t1 - t0;
+      t0 = timer_u32();
+      <code to be measured>
+      t1 = timer_u32();
+      dt = t1 - t0;
    
 The result is that dt contains the number of ticks used by the measured code.  It can be streamlined into following
 
@@ -39,27 +39,27 @@ The result is that dt contains the number of ticks used by the measured code.  I
 
 If instead of calculating the ticks, the result can *always* be converted into a floating point number.
 
-   uint32_t t0,dt;
-   float nanoSeconds, microSeconds, milliSeconds, seconds;
-   
-   t0 = timer_u32();
-   <code to be measured>
-   dt = timer_u32() - t0;                    // Ticks
-   nanoSeconds = timer_u32_ns(dt);
-   microSeconds = timer_u32_us(dt);
-   milliSeconds = timer_u32_ms(dt);
-   seconds = timer_u32_s(dt);
+      uint32_t t0,dt;
+      float nanoSeconds, microSeconds, milliSeconds, seconds;
+
+      t0 = timer_u32();
+      <code to be measured>
+      dt = timer_u32() - t0;                    // Ticks
+      nanoSeconds = timer_u32_ns(dt);
+      microSeconds = timer_u32_us(dt);
+      milliSeconds = timer_u32_ms(dt);
+      seconds = timer_u32_s(dt);
 
 Note that the following code doesn't work during during the timer wraparound
 
-   uint32_t t0;
-   float ms0,ms1,deltaMs;
-   
-   t0 = timer_u32();
-   ms0 = timer_u32_ms(t0);
-   <code to be measured>
-   ms1 = timer_u32_ms(timer_u32());
-   deltaMs = ms1 - ms0;
+      uint32_t t0;
+      float ms0,ms1,deltaMs;
+
+      t0 = timer_u32();
+      ms0 = timer_u32_ms(t0);
+      <code to be measured>
+      ms1 = timer_u32_ms(timer_u32());
+      deltaMs = ms1 - ms0;
 
 
   
