@@ -29,11 +29,11 @@ This is a typical case
    
 The result is that dt contains the number of ticks used by the measured code.  It can be streamlined into following
 
-   uint32_t t0,dt;
+      uint32_t t0,dt;
    
-   t0 = timer_u32();
-   <code to be measured>
-   dt = timer_u32() - t0;
+      t0 = timer_u32();
+      <code to be measured>
+      dt = timer_u32() - t0;
    
 ### Time Units
 
