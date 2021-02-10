@@ -109,3 +109,80 @@ These three alternatives can be seen in the timer_u32.h code
 	__attribute__((always_inline)) static inline float timer_delta_s(uint32_t tics) {
 	   return tics * (0.000001 / _TICKS_PER_US);
 	}
+### FRC2
+
+This was the original timer used in Espressif products.  It has 12.5 ns resolution and it is very simple to use, just read one 32 bit system register at 0x3ff47024.
+
+### TG0_LAC
+
+This is the new standard for ESP32.  It has 500 ns resolution, which is enough for esp_timer_get_time() function implementation.  Internally, it has quite convoluted code with busy waiting. For these reasons, the timer_u32 uses esp_timer_get_time as an internal implementation. **NOT RECOMMENDED.**
+
+### SYSTIMER
+
+This is the latest standard.  It is available for ESP32-S2 and perhaps for ESP32-S3.  It is not availale for ESP32.  It has 12.5 ns resolution and is very simple to use
+
+ - First it writes a command that a new reading is required
+ - Then it waits a confirmation that a new reading is available (very fast)
+ - Finally it reads the 32 bit register value
+ 
+ ## Demo Program
+ 
+ The following program (timer_u32_main.c) demonstrates the time measurement resuts with these 3 different methods.
+ 
+ 	/* Demonstrations of timer_u32 on ESP32 and ESP32-S2
+	    using the available timer options (FRC2, TG0_LAC, SYSTIMER).
+	    These options are descried on page
+
+	    https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/system/esp_timer.html
+
+	    Source code is available at
+
+	    https://github.com/OliviliK/ESP32_timer_u32
+	*/
+
+	#include <stdio.h>
+	#include "sdkconfig.h"
+	#include "timer_u32.h"
+
+	uint64_t fibonacci(int n) {
+	    uint64_t a,b,f;
+	    a = 0;
+	    b = 1;
+	    while (--n > 0) {
+		f = a + b;
+		a = b;
+		b = f;
+	    }
+	    return b;
+	}
+
+	void app_main(void) {
+
+	#if defined(CONFIG_IDF_TARGET_ESP32)
+	    printf("ESP32 processor, ");
+	#elif defined(CONFIG_IDF_TARGET_ESP32S2)
+	    printf("ESP32-S2 processor, ");
+	#else
+	    printf("ESP32-??? processor, ");
+	#endif
+
+	#if defined(CONFIG_ESP_TIMER_IMPL_FRC2)
+	    printf("FRC2\n");
+	#elif defined(CONFIG_ESP_TIMER_IMPL_TG0_LAC)
+	    printf("TG0_LAC\n");
+	#else
+	    printf("SYSTIMER\n");
+	#endif
+
+	    uint32_t dt,t0;
+	    uint64_t f,F92 = 7540113804746346429;
+
+	    for (int i = 1; i<93; i++) {
+		t0 = timer_u32();
+		f = fibonacci(i);
+		dt = timer_u32() - t0;
+		printf("%6.3f us, F%d = %jd\n",timer_delta_us(dt),i,f);
+	    }
+	    if (fibonacci(92) == F92) printf("F92 is OK\n");
+	}
+	
