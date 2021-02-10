@@ -127,7 +127,7 @@ This is the latest standard.  It is available for ESP32-S2 and perhaps for ESP32
  
  ## Demo Program
  
- The following program (timer_u32_main.c) demonstrates the time measurement resuts with these 3 different methods.
+ The following program (timer_u32_main.c) demonstrates the time measurement resuts with these 3 different methods.  The usage is easy, just include the file timer_u32.h.  No source program changes are required when used in different platforms (ESP32, ESP32-S2) with different timers (FRC2, TG0-LAC, SYSTIMER).
  
  	/* Demonstrations of timer_u32 on ESP32 and ESP32-S2
 	    using the available timer options (FRC2, TG0_LAC, SYSTIMER).
